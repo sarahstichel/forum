@@ -4,11 +4,31 @@ function connectToDb()
     $servername = "localhost";
     $username = "root";
     $password = "";
-    $dbname = "inl8";
+    $dbname = "forum";
     $conn = new mysqli($servername, $username, $password, $dbname);
     return $conn;
 };
 
+function login()
+{
+    $conn = connectToDb();
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if (password_verify($password, $row["password_hash"])) {
+            session_start();
+            $_SESSION["username"] = $_POST["username"];
+            $_SESSION["name"] = $row["name"];
+            header("Location: post.php");
+        }
+    }
+}
 
 
 function comment()
@@ -28,4 +48,10 @@ function comment()
             echo $row["name"] . "<br>" . $row["comment"] . "<br>" . $row["time"] . "<hr>";
         }
     }
+}
+
+if (isset($_POST["login_submit"])) {
+    login();
+} elseif (isset($_POST["comment_submit"])) {
+    comment();
 }
