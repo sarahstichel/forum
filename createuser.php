@@ -19,7 +19,7 @@ if (isset($_POST["username"], $_POST["password"])) {
     $stmt->execute();
     if ($stmt->affected_rows > 0) {
         echo "Ny användare skapad <br>";
-        echo " <button><a href='index.html'>Logga in</a></button>";
+        echo " <button><a href='index.php'>Logga in</a></button>";
     } else {
         echo "Error: " . $stmt->error;
     }
